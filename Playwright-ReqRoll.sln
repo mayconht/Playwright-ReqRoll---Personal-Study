@@ -1,6 +1,8 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playwright-ReqRoll", "Playwright-ReqRoll\Playwright-ReqRoll.csproj", "{0BCAE057-9480-4347-88D1-ACB0A9823E70}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playwright-ReqRoll", "Playwright-ReqRoll.csproj", "{B623390A-08A5-673A-FCAE-36E3F3B2C71F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +10,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0BCAE057-9480-4347-88D1-ACB0A9823E70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BCAE057-9480-4347-88D1-ACB0A9823E70}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BCAE057-9480-4347-88D1-ACB0A9823E70}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BCAE057-9480-4347-88D1-ACB0A9823E70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B623390A-08A5-673A-FCAE-36E3F3B2C71F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B623390A-08A5-673A-FCAE-36E3F3B2C71F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B623390A-08A5-673A-FCAE-36E3F3B2C71F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B623390A-08A5-673A-FCAE-36E3F3B2C71F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84E4E854-A360-4EC3-91F6-0D95B97D55FC}
 	EndGlobalSection
 EndGlobal
