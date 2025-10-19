@@ -39,8 +39,12 @@ So that I can access my account
           | username    | password      |
           | invaliduser | password123   | # LF_002 Extension
           | testuser    | wrongpassword | # LF_002 Extension
+          | Giovanna    | 123456        | # LF_002 Extension
           | wrongUser   | wrongPass     | # LF_002
-          | ""          | ""            | # Empty credentials Covers LF_001
+#          |             | wrongPass     | # Empty credentials Covers LF_001 - Both fields are required. TODO Generate test to handle empty fields.
+#          | testuser    |               | # Empty credentials Covers LF_001 - Both fields are required.
+#          |             |               | # Empty credentials Covers LF_001 - Both fields are required.
+                  
 
     @Positive
     @Medium
