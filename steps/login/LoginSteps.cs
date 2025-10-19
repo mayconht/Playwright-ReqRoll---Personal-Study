@@ -15,7 +15,7 @@ public class LoginSteps
     /// <summary>
     ///     Gets a new instance of LoginPage for the current page.
     /// </summary>
-    private static LoginPage LoginPage => new(PlaywrightHooks.Page);
+    private static LoginPageLocators LoginPageLocators => new(PlaywrightHooks.Page);
 
     /// <summary>
     ///     Enters the specified username into the login form.
@@ -24,7 +24,7 @@ public class LoginSteps
     [When("I enter username {string}")]
     public static async Task WhenIEnterUsernameString(string testUser)
     {
-        await LoginPage.EnterUsername(testUser);
+        await LoginPageLocators.EnterUsername(testUser);
     }
 
     /// <summary>
@@ -32,9 +32,16 @@ public class LoginSteps
     /// </summary>
     /// <param name="password">The password to enter.</param>
     [When("I enter password {string}")]
-    public static async Task WhenIEnterPasswordString(string password)
+    public static async Task WhenIEnterPasswordString(string? password)
     {
-        await LoginPage.EnterPassword(password);
+        if(string.IsNullOrEmpty(password))
+        {
+            await LoginPageLocators.EnterPassword("");
+        }
+        else
+        {
+            await LoginPageLocators.EnterPassword(password);
+        }
     }
 
     /// <summary>
@@ -43,7 +50,7 @@ public class LoginSteps
     [When("I click the login button")]
     public static async Task WhenIClickTheLoginButton()
     {
-        await LoginPage.ClickLoginButton();
+        await LoginPageLocators.ClickLoginButton();
     }
 
     /// <summary>
@@ -53,7 +60,7 @@ public class LoginSteps
     [Then("I should see the error message {string}")]
     public static async Task ThenIShouldSeeTheErrorMessageString(string message)
     {
-        await LoginPage.WaitForErrorMessage(message);
+        await LoginPageLocators.WaitForErrorMessage(message);
     }
 
     /// <summary>
@@ -63,7 +70,7 @@ public class LoginSteps
     [Then("I should see the dashboard for {string}")]
     public static async Task ThenIShouldSeeTheDashboardForString(string userName)
     {
-        await LoginPage.AssertDashboardForUser(userName);
+        await LoginPageLocators.AssertDashboardForUser(userName);
     }
 
     /// <summary>
@@ -72,7 +79,7 @@ public class LoginSteps
     [When("I click the logout button")]
     public static async Task WhenIClickTheLogoutButton()
     {
-        await LoginPage.ClickLogoutButton();
+        await LoginPageLocators.ClickLogoutButton();
     }
 
     /// <summary>
@@ -100,7 +107,7 @@ public class LoginSteps
     [Then("the cookies should be cleared")]
     public static async Task ThenTheCookiesShouldBeCleared()
     {
-        var cookies = await LoginPage.GetCookies();
+        var cookies = await LoginPageLocators.GetCookies();
 
         var sessionCookies = cookies.Where(c =>
             c.Name.Contains("session", StringComparison.OrdinalIgnoreCase) ||

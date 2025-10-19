@@ -10,7 +10,7 @@ namespace Playwright_ReqRoll.pages.login;
 ///     Represents the Login page in the application, providing methods to interact with login form elements.
 ///     Uses Playwright locators to find and manipulate page elements.
 /// </summary>
-public class LoginPage(IPage page)
+public class LoginPageLocators(IPage page)
 {
     /// <summary>
     ///     Gets the locator for the username textbox.
