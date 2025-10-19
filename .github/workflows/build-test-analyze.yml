@@ -53,11 +53,11 @@ jobs:
     runs-on: ubuntu-latest    
     env:
       CI: true
-      REPORTS__PATH: ./reports
-      TRACING__TRACESPATH: ./reports/Playwright-Traces
-      VIDEO__DIR: ./reports/Playwright-Videos
-      SCREENSHOTS__DIR: ./reports/Playwright-Screenshots
-      DOWNLOADS__PATH: ./reports/Downloads
+      REPORTS__PATH: /reports
+      TRACING__TRACESPATH: Playwright-Traces
+      VIDEO__DIR: Playwright-Videos
+      SCREENSHOTS__DIR: Playwright-Screenshots
+      DOWNLOADS__PATH: Downloads
       BROWSER__TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.browser_type || 'chromium' }}
       BROWSER__HEADLESS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.headless || 'true' }}
       TRACING__SAVEONPASS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.enable_tracing || 'true' }}
