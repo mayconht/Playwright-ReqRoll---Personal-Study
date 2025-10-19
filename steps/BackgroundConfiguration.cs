@@ -19,7 +19,8 @@ public class BackgroundConfiguration
     [Given(@"I navigate to the login page ""(.*)""")]
     [Given(@"I navigate to the page ""(.*)""")]
     [Given(@"I navigate to the webpage ""(.*)""")]
-    public async Task GivenINavigateToThePage(string url)
+    [Given("I navigate to the search page {string}")]
+    public static async Task GivenINavigateToThePage(string url)
     {
         var page = PlaywrightHooks.Page;
         // If url is provided, use it; otherwise, use default from config
@@ -37,4 +38,5 @@ public class BackgroundConfiguration
             Assert.That(content, Is.Not.Null.And.Not.Empty, $"Page content is empty for URL: {targetUrl}");
         });
     }
+    
 }
