@@ -12,11 +12,11 @@ on:
         - chromium
         - firefox
         - webkit
-#      headless:
-#        description: 'Run in headless mode'
-#        required: false
-#        default: true
-#        type: boolean
+      headless:
+        description: 'Run in headless mode'
+        required: false
+        default: true
+        type: boolean
       categories:
         description: 'Test categories to run (e.g., Login,Search)'
         required: false
@@ -54,7 +54,7 @@ jobs:
     env:
       CI: true
       PLAYWRIGHT_BROWSERS_PATH: ./browsers
-      REPORTS__PATH: ${{GITHUB_WORKSPACE}}/reports
+      REPORTS__PATH: ${{ github.workspace }}/reports
       TRACING__TRACESPATH: Playwright-Traces
       VIDEO__DIR: Playwright-Videos
       SCREENSHOTS__DIR: Playwright-Screenshots
@@ -78,7 +78,7 @@ jobs:
     - name: Cache Playwright browsers
       uses: actions/cache@v4
       with:
-        path: ${{GITHUB_WORKSPACE}}/browsers
+        path: ${{ github.workspace }}/browsers
         key: ${{ runner.os }}-playwright-local
         restore-keys: |
           ${{ runner.os }}-playwright-
@@ -87,10 +87,10 @@ jobs:
       run: dotnet build
       
     - name: Install browsers
-      run: PLAYWRIGHT_BROWSERS_PATH=${{GITHUB_WORKSPACE}}/browsers pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps --only-shell 
+      run: PLAYWRIGHT_BROWSERS_PATH=${{ github.workspace }}/browsers pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps --only-shell 
       
     - name: Run Tests
-      run: PLAYWRIGHT_BROWSERS_PATH=${{GITHUB_WORKSPACE}}/browsers dotnet test --logger trx --results-directory ./TestResults/
+      run: PLAYWRIGHT_BROWSERS_PATH=${{ github.workspace }}/browsers dotnet test --logger trx --results-directory ./TestResults/
 
     - name: Publish test results
       uses: EnricoMi/publish-unit-test-result-action@v2
