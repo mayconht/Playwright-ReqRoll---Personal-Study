@@ -53,7 +53,6 @@ So that I can access my account
         When I enter username "<username>"
         And I enter password "<password>"
         And I click the login button
-        And I click the login button
         Then I should see the dashboard for "<username>"
         When I click the logout button
         Then I should be redirected to the login page
