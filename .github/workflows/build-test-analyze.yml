@@ -53,7 +53,8 @@ jobs:
     runs-on: ubuntu-latest    
     env:
       CI: true
-      REPORTS__PATH: /reports
+      PLAYWRIGHT_BROWSERS_PATH: ./browsers
+      REPORTS__PATH: ./reports
       TRACING__TRACESPATH: Playwright-Traces
       VIDEO__DIR: Playwright-Videos
       SCREENSHOTS__DIR: Playwright-Screenshots
@@ -77,8 +78,8 @@ jobs:
     - name: Cache Playwright browsers
       uses: actions/cache@v4
       with:
-        path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-playwright-1.55.0
+        path: ./browsers
+        key: ${{ runner.os }}-playwright-local
         restore-keys: |
           ${{ runner.os }}-playwright-
         
@@ -86,7 +87,7 @@ jobs:
       run: dotnet build
       
     - name: Install browsers
-      run: pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
+      run: pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps --only-shell --dir ./browsers
       
     - name: Run Tests
       run: dotnet test --logger trx --results-directory ./TestResults/
