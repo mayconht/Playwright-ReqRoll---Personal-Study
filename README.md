@@ -1,39 +1,174 @@
 ﻿# Playwright-ReqRoll
 
-This project contains automated UI tests using Playwright and Reqnroll (BDD) for login scenarios.
+[![.NET](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com/)
+[![Playwright](https://img.shields.io/badge/Playwright-1.55.0-green.svg)](https://playwright.dev/)
+[![Reqnroll](https://img.shields.io/badge/Reqnroll-3.1.2-orange.svg)](https://reqnroll.net/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+# Playwright-ReqRoll
+
+A simple UI automation testing framework using Playwright and Reqnroll (BDD) for web applications. 
+
+This project is part of my study portfolio, showcasing skills in automated testing, BDD, and handling complex UI scenarios. 
+Keep in mind some implementations are simplified, or might not be right due to limitations of both knowledge or time.
+So if you come across something that could be improved, please feel free to open an issue or a PR.
+
+## Technologies Used
+
+- **.NET 8.0** - Target framework
+- **Playwright** - End-to-end testing framework
+- **Reqnroll** - BDD framework for .NET (formerly SpecFlow)
+- **NUnit** - Unit testing framework
+- **Gherkin** - Business-readable, domain-specific language for behavior descriptions
+- **Microsoft.Extensions.Configuration** - Configuration management
+
+## Architecture
+
+The project follows a structured approach for UI automation testing:
+
+- **Features** - Gherkin feature files defining test scenarios
+- **Steps** - Step definitions implementing the Gherkin steps
+- **Pages** - Page Object Models for UI interactions
+- **Hooks** - Test lifecycle management and browser setup
+
+## Features
+
+- BDD Testing: Behavior-Driven Development with Reqnroll
+- Cross-Browser Support: Tests run on Chromium, Firefox, and WebKit
+- Dynamic DOM Handling: Strategies for dealing with re-rendering UI components
+- Stale Element Management: Robust handling of element re-attachment after page updates
+- Reporting: Live Interactive Traces, videos, and screenshots for test failures and successes
+- Shared Browser Context (under dev): Keeps browser open across scenarios for performance and state management
 
 ## Prerequisites
 
-- .NET 8.0
-- Supported browsers (Chromium, Firefox, WebKit) installed via Playwright
+- .NET 8.0 or higher
+- Node.js (for Playwright browser installation)
+- Git
 
-## How to run the tests
+## Running the Project
 
-1. Install dependencies:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/Playwright-ReqRoll.git
+   cd Playwright-ReqRoll
    ```
+
+2. Restore .NET dependencies:
+   ```bash
    dotnet restore
    ```
 
-2. Install Playwright browsers:
-   ```
-   dotnet run --project Playwright-ReqRoll/Playwright-ReqRoll.csproj -- install
+3. Install Playwright browsers:
+   ```bash
+   dotnet run --project Playwright-ReqRoll.csproj -- install
    ```
 
-3. Run the tests:
-   ```
-   dotnet test
-   ```
+## Application Access
+
+The tests target external web applications:
+
+- Login Flow: https://www.cnarios.com/challenges/login-flow
+- Search Engine: https://www.cnarios.com/challenges/simple-search-engine
+
+## Running Tests
+
+### Run all tests:
+```bash
+dotnet test
+```
+
+### Run specific test categories:
+```bash
+# Run only login tests
+dotnet test --filter "Category=Login"
+
+# Run only search tests
+dotnet test --filter "Category=Search"
+```
+
+### Run with specific browser:
+Modify `appsettings.json` to set the desired browser:
+```json
+{
+  "BrowserType": "chromium", // or "firefox", "webkit"
+  "Headless": false
+}
+```
 
 ## Configuration
 
-Configurations are in `appsettings.json`:
-- Browser type
-- Headless mode
-- Paths for reports (traces, videos, downloads)
+The project uses `appsettings.json` for configuration:
 
-## Reports
+- `BrowserType`: "chromium", "firefox", or "webkit"
+- `Headless`: true/false for headless mode
+- `SlowMo`: Delay between actions in milliseconds
+- `ReportsPath`: Path for saving test artifacts
+- `RecordVideo`: true/false to record videos
+- `ScreenshotOnSuccess/Failure`: Capture screenshots
 
-Artifacts are saved in `C:\reports`:
-- Traces: `Playwright-Traces/`
-- Videos: `Playwright-Videos/`
-- Downloads: `Downloads/`
+## Development Workflow
+
+1. Write or update Gherkin feature files in the `features/` directory
+2. Implement step definitions in the `steps/` directory
+3. Define page objects in the `pages/` directory for UI interactions
+4. Run tests to validate changes
+5. Review test reports and artifacts for failures
+
+## Project Structure
+
+```
+Playwright-ReqRoll/
+├── features/           # Gherkin feature files
+│   ├── login/         # Login flow scenarios
+│   └── search/        # Search engine scenarios
+├── steps/             # Step definitions
+├── pages/             # Page Object Models
+├── hooks/             # Test lifecycle management
+├── appsettings.json   # Configuration
+└── README.md          # This file
+```
+
+## Testing Strategy
+
+The project includes BDD tests covering:
+
+- UI interactions with various scenarios
+- Dynamic DOM handling and re-rendering
+- Stale element exception management
+- Cross-browser compatibility
+- Comprehensive reporting and debugging
+
+Test frameworks used:
+
+- Reqnroll for BDD execution
+- NUnit for test assertions
+- Playwright for browser automation
+
+## Contributing
+
+1. Fork the repository
+2. Create a test branch (`git checkout -b tests/amazing-tests`)
+3. Commit your changes (`git commit -m 'Add some amazing tests'`)
+4. Push to the branch (`git push origin tests/amazing-tests`)
+5. Open a Pull Request
+
+## Troubleshooting
+Ops, not yet.
+### Common Issues
+
+1. Browser not found: Verify if Playwright browsers are installed with `dotnet run --project Playwright-ReqRoll.csproj -- install`
+
+2. Video file locked: Increased delay in teardown to ensure files are fully written
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or support, please open an issue on GitHub.
+
+---
+
+Built with using Playwright and Reqnroll
