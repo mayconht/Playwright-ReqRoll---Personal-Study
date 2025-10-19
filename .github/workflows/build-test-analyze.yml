@@ -1,0 +1,175 @@
+﻿name: Build, Test and Analyze
+
+on:
+  workflow_dispatch:
+    inputs:
+      browser_type:
+        description: 'Browser type'
+        required: false
+        default: 'chromium'
+        type: choice
+        options:
+        - chromium
+        - firefox
+        - webkit
+      headless:
+        description: 'Run in headless mode'
+        required: false
+        default: true
+        type: boolean
+      categories:
+        description: 'Test categories to run (e.g., Login,Search)'
+        required: false
+        default: 'Login,Search'
+        type: string
+      enable_tracing:
+        description: 'Enable tracing'
+        required: false
+        default: true
+        type: boolean
+      enable_video:
+        description: 'Enable video recording'
+        required: false
+        default: true
+        type: boolean
+      enable_screenshots:
+        description: 'Enable screenshots'
+        required: false
+        default: true
+        type: boolean
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened]
+    
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test-analyze:
+    name: Build, Test and Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    
+    env:
+      CI: true
+      REPORTS__PATH: ./reports
+      TRACING__TRACESPATH: ./reports/Playwright-Traces
+      VIDEO__DIR: ./reports/Playwright-Videos
+      SCREENSHOTS__DIR: ./reports/Playwright-Screenshots
+      DOWNLOADS__PATH: ./reports/Downloads
+      BROWSER__TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.browser_type || 'chromium' }}
+      BROWSER__HEADLESS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.headless || 'true' }}
+      TRACING__SAVEONPASS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.enable_tracing || 'true' }}
+      VIDEO__RECORD: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.enable_video || 'true' }}
+      SCREENSHOTS__ONSUCCESS: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.enable_screenshots || 'true' }}
+      SCREENSHOTS__ONFAILURE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.enable_screenshots || 'true' }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v4
+      with:
+        path: ~/sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    - name: Cache SonarCloud scanner
+      id: cache-sonar-scanner
+      uses: actions/cache@v4
+      with:
+        path: ./.sonar/scanner
+        key: ${{ runner.os }}-sonar-scanner
+        restore-keys: ${{ runner.os }}-sonar-scanner
+
+    - name: Install SonarCloud scanner
+      if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p ./.sonar/scanner
+        dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+
+    - name: Restore dependencies
+      run: dotnet restore Playwright-ReqRoll.sln
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Begin SonarCloud analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        ./.sonar/scanner/dotnet-sonarscanner begin \
+          /k:"yourusername_Playwright-ReqRoll" \
+          /o:"yourorganization" \
+          /d:sonar.token="$SONAR_TOKEN" \
+          /d:sonar.host.url="https://sonarcloud.io" \
+          /d:sonar.projectBaseDir="$GITHUB_WORKSPACE" \
+          /d:sonar.exclusions="**/features/**/*.feature,**/bin/**,**/obj/**,**/*.cs"
+
+    - name: Build
+      run: dotnet build Playwright-ReqRoll.sln --configuration Release --no-restore
+
+    - name: Run tests
+      run: |
+        categories="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.categories || 'Login,Search' }}"
+        filter=""
+        if [ -n "$categories" ]; then
+          IFS=',' read -ra CAT_ARRAY <<< "$categories"
+          for cat in "${CAT_ARRAY[@]}"; do
+            filter="${filter}|Category=$cat"
+          done
+          filter="${filter:1}"  # remove leading |
+        fi
+        dotnet test Playwright-ReqRoll.csproj \
+          --configuration Release \
+          --no-build \
+          --logger trx \
+          --logger "nunit;LogFilePath=test-results.xml" \
+          --results-directory ./TestResults/ \
+          --verbosity normal \
+          ${filter:+--filter "$filter"}
+
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: TestResults/**/*.trx
+
+    - name: Upload test artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/
+
+    - name: Upload Playwright artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-artifacts
+        path: reports/
+
+    - name: End SonarCloud analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"

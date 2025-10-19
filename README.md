@@ -161,6 +161,27 @@ Ops, not yet.
 
 2. Video file locked: Increased delay in teardown to ensure files are fully written
 
+## Viewing Traces
+
+Traces are generated for failed tests and can be viewed to debug issues:
+
+### Online Trace Viewer
+1. Go to [Playwright Trace Viewer](https://trace.playwright.dev/)
+2. Upload the `.zip` trace file from `C:\reports\Playwright-Traces\`
+
+### Local Trace Viewer
+1. Install Playwright CLI if not already:
+   ```bash
+   npm install -g @playwright/test
+   ```
+
+2. View the trace locally:
+   ```bash
+   npx playwright show-trace "C:\reports\Playwright-Traces\trace-file.zip"
+   ```
+
+Traces provide a timeline of actions, screenshots, and network requests for detailed debugging.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
