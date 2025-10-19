@@ -50,12 +50,7 @@ concurrency:
 jobs:
   build-test-analyze:
     name: Build, Test and Analyze
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      checks: write
-      pull-requests: write
-    
+    runs-on: ubuntu-latest    
     env:
       CI: true
       REPORTS__PATH: ./reports
@@ -72,42 +67,18 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v5
       with:
-        fetch-depth: 0
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Restore dependencies
-      run: dotnet restore Playwright-ReqRoll.sln
-
-    - name: Build
-      run: dotnet build Playwright-ReqRoll.sln --configuration Release --no-restore
+        dotnet-version: 8.0.x
+        
+    - name: Build & Install
+      run: dotnet build
       
-    - name: Install Playwright browsers
-      run: dotnet run --project Playwright-ReqRoll.csproj -- install
-
-    - name: Run tests
-      run: |
-        categories="${{ github.event_name == 'workflow_dispatch' && github.event.inputs.categories || 'Login,Search' }}"
-        filter=""
-        if [ -n "$categories" ]; then
-          IFS=',' read -ra CAT_ARRAY <<< "$categories"
-          for cat in "${CAT_ARRAY[@]}"; do
-            filter="${filter}|Category=$cat"
-          done
-          filter="${filter:1}"  # remove leading |
-        fi
-        dotnet test Playwright-ReqRoll.csproj \
-          --configuration Release \
-          --no-build \
-          --logger trx \
-          --results-directory ./TestResults/ \
-          --verbosity normal \
-          ${filter:+--filter "$filter"}
+    - name: Install browsers
+      run: pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
 
     - name: Publish test results
       uses: EnricoMi/publish-unit-test-result-action@v2
