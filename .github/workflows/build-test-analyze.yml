@@ -86,45 +86,11 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v4
-      with:
-        path: ~/sonar/cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
-
-    - name: Cache SonarCloud scanner
-      id: cache-sonar-scanner
-      uses: actions/cache@v4
-      with:
-        path: ./.sonar/scanner
-        key: ${{ runner.os }}-sonar-scanner
-        restore-keys: ${{ runner.os }}-sonar-scanner
-
-    - name: Install SonarCloud scanner
-      if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-      run: |
-        mkdir -p ./.sonar/scanner
-        dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
-
     - name: Restore dependencies
       run: dotnet restore Playwright-ReqRoll.sln
 
     - name: Install Playwright browsers
       run: npx playwright install --with-deps
-
-    - name: Begin SonarCloud analysis
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        ./.sonar/scanner/dotnet-sonarscanner begin \
-          /k:"yourusername_Playwright-ReqRoll" \
-          /o:"yourorganization" \
-          /d:sonar.token="$SONAR_TOKEN" \
-          /d:sonar.host.url="https://sonarcloud.io" \
-          /d:sonar.projectBaseDir="$GITHUB_WORKSPACE" \
-          /d:sonar.exclusions="**/features/**/*.feature,**/bin/**,**/obj/**,**/*.cs"
 
     - name: Build
       run: dotnet build Playwright-ReqRoll.sln --configuration Release --no-restore
@@ -168,8 +134,3 @@ jobs:
       with:
         name: playwright-artifacts
         path: reports/
-
-    - name: End SonarCloud analysis
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="$SONAR_TOKEN"
