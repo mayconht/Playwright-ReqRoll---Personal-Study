@@ -1,6 +1,6 @@
 ﻿using Microsoft.Playwright;
 
-namespace Playwright_ReqRoll.Pages;
+namespace Playwright_ReqRoll.pages.login;
 
 /*Many methods that exists here are just example on how to wrap user actions or create a user action for easier handling
  in code development, so I am forgiving on how granular this sounds, as this is an experimenting project

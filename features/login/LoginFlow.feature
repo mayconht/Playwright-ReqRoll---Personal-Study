@@ -12,6 +12,8 @@ So that I can access my account
 
     @Positive
     @High
+    @LF_003
+    @LF_004
     Scenario Outline: Successful login with valid credentials
         When I enter username "<username>"
         And I enter password "<password>"
@@ -27,7 +29,6 @@ So that I can access my account
     @High
     @LF_001
     @LF_002
-    # LF_002, LF_001
     Scenario Outline: Login with invalid credentials
         When I enter username "<username>"
         And I enter password "<password>"
@@ -43,7 +44,7 @@ So that I can access my account
 
     @Positive
     @Medium
-    # LF_005
+    @LF_005
     Scenario Outline: Login with each user and logout
         When I enter username "<username>"
         And I enter password "<password>"
