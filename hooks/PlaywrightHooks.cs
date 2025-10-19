@@ -25,9 +25,9 @@ public partial class PlaywrightHooks
     private static IBrowser _browser = null!;
 
     /// <summary>
-    ///     The browser context for the current scenario.
+    ///     The browser context shared across scenarios to keep the browser open for stale element testing.
     /// </summary>
-    private IBrowserContext _context = null!;
+    private static IBrowserContext _context = null!;
 
     /// <summary>
     ///     Gets the current page instance for the scenario.
@@ -36,7 +36,7 @@ public partial class PlaywrightHooks
     public static IPage Page { get; private set; } = null!;
 
     /// <summary>
-    ///     Sets up the Playwright instance and launches the browser before the test run.
+    ///     Sets up the Playwright instance, launches the browser, and creates a shared context.
     ///     Configures browser type, headless mode, slow motion, and download path based on Config settings.
     /// </summary>
     [BeforeTestRun]
@@ -59,29 +59,8 @@ public partial class PlaywrightHooks
                 SlowMo = Config.SlowMo,
                 DownloadsPath = Path.Combine(Config.ReportsPath, Config.DownloadsPath)
             });
-    }
 
-    /// <summary>
-    ///     Tears down the browser and disposes the Playwright instance after the test run.
-    /// </summary>
-    [AfterTestRun]
-    public static async Task GlobalTeardown()
-    {
-        await _browser.CloseAsync();
-        _playwright.Dispose();
-    }
-
-    /// <summary>
-    ///     Sets up a new browser context and page for each scenario.
-    ///     Starts tracing and video recording (if enabled) for the context.
-    /// </summary>
-    [BeforeScenario]
-    public async Task SetupScenario()
-    {
-        if (Config.RecordVideo) Directory.CreateDirectory(Path.Combine(Config.ReportsPath, Config.VideoDir));
-
-        if (Config.ScreenshotOnSuccess || Config.ScreenshotOnFailure) Directory.CreateDirectory(Path.Combine(Config.ReportsPath, Config.ScreenshotsDir));
-
+        // Create shared context for all scenarios
         _context = await _browser.NewContextAsync(new BrowserNewContextOptions
         {
             ColorScheme = ColorScheme.Light,
@@ -97,6 +76,29 @@ public partial class PlaywrightHooks
                 Height = 1080
             }
         });
+    }
+
+    /// <summary>
+    ///     Tears down the browser and disposes the Playwright instance after the test run.
+    /// </summary>
+    [AfterTestRun]
+    public static async Task GlobalTeardown()
+    {
+        await _browser.CloseAsync();
+        _playwright.Dispose();
+    }
+
+    /// <summary>
+    ///     Sets up a new page for each scenario from the shared context.
+    ///     Starts tracing for the scenario.
+    /// </summary>
+    [BeforeScenario]
+    public async Task SetupScenario()
+    {
+        if (Config.RecordVideo) Directory.CreateDirectory(Path.Combine(Config.ReportsPath, Config.VideoDir));
+
+        if (Config.ScreenshotOnSuccess || Config.ScreenshotOnFailure) Directory.CreateDirectory(Path.Combine(Config.ReportsPath, Config.ScreenshotsDir));
+
 
         await _context.Tracing.StartAsync(new TracingStartOptions
         {
@@ -167,9 +169,9 @@ public partial class PlaywrightHooks
             var status = scenarioContext.TestError != null ? "failed" : "passed";
             var newVideoPath = Path.Combine(videoDir, $"{scenarioTitle}_{timestamp}_{status}.webm");
 
-            await _context.CloseAsync();
+            await Page.CloseAsync();
 
-            await Task.Delay(500);
+            await Task.Delay(2000); // Increased delay to ensure video file is fully written
 
             if (File.Exists(videoPath))
             {
@@ -179,7 +181,7 @@ public partial class PlaywrightHooks
         }
         else
         {
-            await _context.CloseAsync();
+            await Page.CloseAsync();
         }
     }
 
