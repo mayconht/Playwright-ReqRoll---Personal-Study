@@ -12,11 +12,11 @@ on:
         - chromium
         - firefox
         - webkit
-      headless:
-        description: 'Run in headless mode'
-        required: false
-        default: true
-        type: boolean
+#      headless:
+#        description: 'Run in headless mode'
+#        required: false
+#        default: true
+#        type: boolean
       categories:
         description: 'Test categories to run (e.g., Login,Search)'
         required: false
@@ -38,9 +38,9 @@ on:
         default: true
         type: boolean
   push:
-    branches: [ main ]
+    branches: [ main, master, develop, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master, develop, dev ]
     types: [opened, synchronize, reopened]
     
 concurrency:
@@ -76,11 +76,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -89,11 +84,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore Playwright-ReqRoll.sln
 
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps
-
     - name: Build
       run: dotnet build Playwright-ReqRoll.sln --configuration Release --no-restore
+      
+    - name: Install Playwright browsers
+      run: dotnet run --project Playwright-ReqRoll.csproj -- install
 
     - name: Run tests
       run: |
