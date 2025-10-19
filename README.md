@@ -43,7 +43,6 @@ The project follows a structured approach for UI automation testing:
 ## Prerequisites
 
 - .NET 8.0 or higher
-- Node.js (for Playwright browser installation)
 - Git
 
 ## Running the Project
