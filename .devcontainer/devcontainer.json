@@ -20,7 +20,7 @@
 	// }
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	 "postCreateCommand": "dotnet restore && dotnet build && pwsh .bin/Debug/net8.0/playwright.ps1 install-deps && pwsh /workspaces/Playwright-ReqRoll/bin/Debug/net8.0/playwright.ps1 install && dotnet test",
+	 "postCreateCommand": "dotnet restore && dotnet build && pwsh /workspaces/Playwright-ReqRoll/bin/Debug/net8.0/playwright.ps1 install-deps && pwsh /workspaces/Playwright-ReqRoll/bin/Debug/net8.0/playwright.ps1 install && dotnet test",
 
 	 //Add extensions for C# development
 	"customizations": {
