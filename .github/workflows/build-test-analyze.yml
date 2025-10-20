@@ -84,12 +84,22 @@ jobs:
       id: playwright-cache
       with:
         path: ${{ github.workspace }}/browsers
-        key: ${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}
+        key: ${{ runner.os }}-playwright-browsers-${{ steps.playwright-version.outputs.version }}
+    
+    - name: Cache Playwright system dependencies
+      uses: actions/cache@v4
+      id: playwright-deps-cache
+      with:
+        path: |
+          /usr/lib/x86_64-linux-gnu
+          /usr/share
+        key: ${{ runner.os }}-playwright-deps-${{ steps.playwright-version.outputs.version }}
         
     - name: Build & Install
       run: dotnet build
       
     - name: Install Playwright system dependencies
+      if: steps.playwright-deps-cache.outputs.cache-hit != 'true'
       run: pwsh bin/Debug/net8.0/playwright.ps1 install-deps
       
     - name: Install Playwright browsers
