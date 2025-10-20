@@ -194,7 +194,7 @@ Traces are generated for failed tests and can be viewed to debug issues:
 
 ### Online Trace Viewer
 1. Go to [Playwright Trace Viewer](https://trace.playwright.dev/)
-2. Upload the `.zip` trace file from `C:\reports\Playwright-Traces\`
+2. Upload the `.zip` trace file from `<Your_Dir>\Playwright-Traces\`
 
 ### Local Trace Viewer
 1. Install Playwright for .NET if not already:
@@ -220,3 +220,4 @@ For questions or support, please open an issue on GitHub.
 ---
 
 Built with using Playwright and Reqnroll
+
