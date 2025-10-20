@@ -78,6 +78,14 @@ jobs:
     - name: Get Playwright version
       id: playwright-version
       run: echo "version=$(grep -oP 'Microsoft\.Playwright\.NUnit" Version="\K[^"]+' Playwright-ReqRoll.csproj)" >> $GITHUB_OUTPUT
+    
+    - name: Cache apt packages
+      uses: actions/cache@v4
+      with:
+        path: /var/cache/apt/archives
+        key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/build-test-analyze.yml') }}
+        restore-keys: |
+          ${{ runner.os }}-apt-
         
     - name: Cache Playwright browsers
       uses: actions/cache@v4
@@ -85,21 +93,11 @@ jobs:
       with:
         path: ${{ github.workspace }}/browsers
         key: ${{ runner.os }}-playwright-browsers-${{ steps.playwright-version.outputs.version }}
-    
-    - name: Cache Playwright system dependencies
-      uses: actions/cache@v4
-      id: playwright-deps-cache
-      with:
-        path: |
-          /usr/lib/x86_64-linux-gnu
-          /usr/share
-        key: ${{ runner.os }}-playwright-deps-${{ steps.playwright-version.outputs.version }}
         
     - name: Build & Install
       run: dotnet build
       
     - name: Install Playwright system dependencies
-      if: steps.playwright-deps-cache.outputs.cache-hit != 'true'
       run: pwsh bin/Debug/net8.0/playwright.ps1 install-deps
       
     - name: Install Playwright browsers
