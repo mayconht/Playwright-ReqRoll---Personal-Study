@@ -90,7 +90,6 @@ jobs:
       run: dotnet build
       
     - name: Install Playwright system dependencies
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: pwsh bin/Debug/net8.0/playwright.ps1 install-deps
       
     - name: Install Playwright browsers
