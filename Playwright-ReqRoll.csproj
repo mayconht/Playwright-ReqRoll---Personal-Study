@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="**/*.feature"/>
+        <Reqnroll Include="features\**\*.feature"/>
         <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
