@@ -45,6 +45,34 @@ The project follows a structured approach for UI automation testing:
 - .NET 8.0 or higher
 - Git
 
+## Dev Container (VS Code / Codespaces)
+
+This repo includes a ready-to-use Dev Container to get you coding and running tests fast, with everything pinned for .NET 8 and Playwright.
+
+- Base image: `mcr.microsoft.com/devcontainers/dotnet:1-8.0`
+- Auto steps on first open: restore, build, install Playwright browsers, and run tests
+- VS Code extensions preinstalled:
+   - `ms-dotnettools.csdevkit`
+   - `ms-playwright.playwright`
+   - `alexkrechik.cucumberautocomplete`
+   - `tal7aouy.rainbow-brackets`
+
+How to use:
+
+1. Install VS Code and the “Dev Containers” extension (or open in GitHub Codespaces).
+2. Press F1 and type "Dev Container: Start in Container"
+3. Open the folder in a container; the post-create hooks will:
+    - `dotnet restore`
+    - `dotnet build`
+    - install Playwright browsers via the generated script
+    - `dotnet test`
+
+Notes and troubleshooting:
+
+- The Playwright install script path uses your target framework. This project targets `net8.0`, so the script is generated at `bin/Debug/net8.0/playwright.ps1` (Windows/PowerShell) or `bin/Debug/net8.0/playwright.sh` (Linux/macOS/Bash). If you change the target framework, update any references accordingly.
+- On first run inside a fresh container, browser downloads can take a few minutes.
+- If tests fail during container creation, re-run them after the browsers finish installing.
+
 ## Running the Project
 
 1. Clone the repository:
