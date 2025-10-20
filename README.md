@@ -197,14 +197,14 @@ Traces are generated for failed tests and can be viewed to debug issues:
 2. Upload the `.zip` trace file from `C:\reports\Playwright-Traces\`
 
 ### Local Trace Viewer
-1. Install Playwright CLI if not already:
+1. Install Playwright for .NET if not already:
    ```bash
-   npm install -g @playwright/test
+   dotnet tool install --global Microsoft.Playwright.CLI
    ```
 
 2. View the trace locally:
    ```bash
-   npx playwright show-trace "C:\reports\Playwright-Traces\trace-file.zip"
+   playwright show-trace "<Your_Dir>\Playwright-Traces\trace-file.zip"
    ```
 
 Traces provide a timeline of actions, screenshots, and network requests for detailed debugging.
